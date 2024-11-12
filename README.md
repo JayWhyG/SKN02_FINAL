@@ -128,17 +128,21 @@ AI 모의면접 서비스
 <details>
   <summary>1. 메인화면</summary>
   
-  - '지금 시작하기' 클릭 시 로그인 창으로 이동
-  
+  - '지금 시작하기' 클릭 시 로그인 창으로 이동<br>
+      <img src="https://github.com/user-attachments/assets/b6a1306e-736f-4de2-91d1-8a70f07b7ca3" width="600px">
   
 </details>
 
 <details>
   <summary>2. 로그인/회원가입 화면</summary>
   
-  - 아이디와 비밀번호 입력 후 '로그인' 버튼 클릭 시 로그인 진행
-  - '회원가입' 버튼 클릭 시 이용약관 동의 후 진행 가능
-  - '아이디 찾기'버튼 클릭 후 가입된 이메일 입력 시 해당 아이디를 찾을 수 있음.
+  - 아이디와 비밀번호 입력 후 '로그인' 버튼 클릭 시 로그인 진행<br>
+    <img src="https://github.com/user-attachments/assets/e9c66a0c-3b29-447d-9814-85ac2d9bd953" width="600px">
+  - '회원가입' 버튼 클릭 시 이용약관 동의 후 진행 가능<br>
+  <img src="https://github.com/user-attachments/assets/4aa7c940-6f00-4dcd-86a6-0c0bcc188dc3" width="600px"><br>
+  <img src="https://github.com/user-attachments/assets/573fdcf4-78b9-42e4-9b81-c6ba790df1ad" width="600px"><br>
+  - '아이디 찾기'버튼 클릭 후 가입된 이메일 입력 시 해당 아이디를 찾을 수 있음. <br>
+    <img src="https://github.com/user-attachments/assets/a1f4ffb9-884f-4fb1-8398-d786a624eda4" width="600px">
 
   
 </details>
@@ -146,7 +150,8 @@ AI 모의면접 서비스
 <details>
   <summary>3. 면접 진행 화면</summary>
   
-  - 사용자는 이력서 업로드, 면접 난이도 및 면접관 태도/기업 및 직무 등을 선택할 수 있음
+  - 사용자는 이력서 업로드, 면접 난이도 및 면접관 태도/기업 및 직무 등을 선택할 수 있음<br>
+    <img src= "https://github.com/user-attachments/assets/9e6b7e45-b34b-417b-b5b3-6b3ef352602b" width="600px"><br>
   - 면접 진행 중
   - '결과 보기' 버튼 클릭 시 피드백 화면으로 이동
 
