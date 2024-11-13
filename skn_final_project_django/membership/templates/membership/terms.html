@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>이용약관</title>
+    <style>
+        /* 필요한 스타일 추가 */
+        body {
+            /* 배경에 애니메이션 그라데이션 추가 */
+            /*background: linear-gradient(-180deg, #1915fa, #ffae34);*/
+            background: linear-gradient(-225deg, rgba(0,224,255, 0.7), rgba(255,110,255, 0.7));
+            background-size: 150% 150%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-blend-mode: lighten;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        .terms-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 10px;
+            margin-top: 5rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .terms-content {
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 2rem;
+            border: 1px solid #ccc;
+            padding: 1rem;
+        }
+        .buttons {
+            text-align: center;
+        }
+        .buttons button {
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .buttons button.accept {
+            background-color: #6c63ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .buttons button.decline {
+            background-color: #ccc;
+            color: black;
+            border: none;
+            border-radius: 5px;
+        }
+        .top-image {
+            width: 100%; /* 원하는 이미지 최대 너비 */
+            height: 80%;
+            margin-left: 200%;
+            margin-bottom: 5%; /* 아래 여백 */
+            position: static;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <img src="{% static 'logo_9.png' %}" alt="이미지 설명" class="top-image">
+    </div>
+    <div class="terms-container">
+        <h1 style="text-align: center; margin-top: 0rem; margin-bottom: 2rem;">서비스 이용 약관</h1>
+        <div class="terms-content">
+            <!-- 이용약관 내용을 여기에 추가 -->
+            <section>
+                <h2>제1조 (목적)</h2>
+                <p>이 약관은 이용자가 본 서비스에 가입하고 서비스를 이용함에 있어 필요한 권리, 의무 및 책임 사항을 규정함을 목적으로 합니다.</p>
+              </section>
+              
+              <section>
+                <h2>제2조 (회원가입)</h2>
+                <p>이용자는 회원가입 시, 자소서와 이력서와 같은 개인정보를 포함한 정보를 제공할 수 있습니다.</p>
+                <p>가입을 원할 경우 서비스에 필요한 최소한의 정보를 제공하여야 하며, 모든 정보는 정확해야 합니다.</p>
+              </section>
+              
+              <section>
+                <h2>제3조 (개인정보 수집 항목)</h2>
+                <ul>
+                  <li>수집되는 정보: 이름, 이메일, 연락처, 자소서 및 이력서, 기타 면접 관련 자료</li>
+                  <li>수집 목적: 개인화된 맞춤형 면접 서비스 제공, 사용자의 면접 결과 분석 및 피드백 제공</li>
+                </ul>
+              </section>
+              
+              <section>
+                <h2>제4조 (개인정보의 이용)</h2>
+                <p>이용자의 개인정보는 아래의 목적으로만 이용됩니다:</p>
+                <ul>
+                  <li>면접 준비와 모의면접 진행을 위해 필요한 질문 생성</li>
+                  <li>면접 결과 분석 및 피드백 제공</li>
+                  <li>서비스 개선 및 신규 기능 개발</li>
+                </ul>
+              </section>
+              
+              <section>
+                <h2>제5조 (개인정보의 보관 및 보호)</h2>
+                <p>이용자의 개인정보는 서비스 이용 종료 시점까지 보관되며, 이용자가 회원 탈퇴를 요청할 경우 즉시 삭제됩니다.</p>
+                <p>모든 개인정보는 암호화되어 안전하게 보관됩니다.</p>
+                <p>본 서비스는 외부 서버와 데이터 전송 시 SSL 암호화 방식으로 전송하여 안전하게 보호됩니다.</p>
+              </section>
+              
+              <section>
+                <h2>제6조 (개인정보 제3자 제공)</h2>
+                <p>원칙적으로, 이용자의 개인정보는 제3자에게 제공되지 않습니다. 다만, 법령에 따라 제3자에게 제공할 필요가 있는 경우 사전 동의를 받습니다.</p>
+              </section>
+              
+              <section>
+                <h2>제7조 (이용자의 권리)</h2>
+                <p>이용자는 언제든지 개인정보 열람, 수정, 삭제를 요청할 수 있습니다.</p>
+                <p>개인정보 제공에 동의하지 않을 권리가 있으며, 동의 거부 시 일부 서비스 이용에 제한이 있을 수 있습니다.</p>
+              </section>
+              
+              <section>
+                <h2>제8조 (약관 변경)</h2>
+                <p>본 약관은 필요에 따라 변경될 수 있으며, 변경될 경우 사전에 공지합니다.</p>
+                <p>변경된 약관은 공지 후 7일 이후에 효력이 발생합니다.</p>
+              </section>
+            <!-- 실제 약관 내용을 추가하세요 -->
+        </div>
+        <div class="buttons">
+            <button class="decline" onclick="declineTerms()">동의하지 않음</button>
+            <button class="accept" onclick="acceptTerms()">동의함</button>
+        </div>
+    </div>
+
+    <script>
+        function acceptTerms() {
+            // 회원가입 페이지로 이동
+            window.location.href = '/membership/signup/';
+        }
+
+        function declineTerms() {
+            // 이전 페이지로 이동하거나 로그인 페이지로 이동
+            window.location.href = '/membership/login/';
+        }
+    </script>
+</body>
+</html>

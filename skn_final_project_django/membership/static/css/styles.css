@@ -1,0 +1,61 @@
+/* static/css/styles.css */
+
+.header {
+    font-size: 2rem;
+}
+
+@media (max-width: 768px) {
+    .header {
+        font-size: 1.5rem;
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.fade-in.visible {
+    opacity: 1;
+}
+
+:root {
+    --primary-color: #ffffff;
+    --secondary-color: #ffffff;
+    --accent-color: #e37400;
+}
+
+body {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.button {
+    background-color: var(--accent-color);
+    border: none;
+    color: #fff;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+h1, h2, h3 {
+    font-weight: 700;
+}
+
+p {
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.center-text {
+    display: flex;
+    justify-content: center;  /* 수평 중앙 정렬 */
+    text-align: center;       /* 텍스트 중앙 정렬 */
+    margin: 0;                /* 기본 마진 제거 */
+}
+
+.titlecolor {
+    color:rgba(82, 82, 82, 0.712);
+}

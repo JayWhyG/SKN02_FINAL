@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>면접 진행</title>
+    <!-- 필요한 스타일 시트 및 라이브러리 추가 -->
+    <!-- Bootstrap CSS 추가 (선택 사항) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 커스텀 스타일 -->
+    <style>
+        body {
+            /* 배경에 애니메이션 그라데이션 및 패럴랙스 효과 추가 */
+            background: linear-gradient(-225deg, rgba(0,224,255,0.7), rgba(255,110,255,0.7));
+            background-size: 150% 150%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-blend-mode: lighten;
+            perspective: 1000px;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .parallax-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 150%;
+            height: 150%;
+            background-image: url('https://www.transparenttextures.com/patterns/diamond-upholstery.png');
+            background-size: cover;
+            background-position: center;
+            transform: translateZ(-500px) scale(2);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            transform-style: preserve-3d;
+            transform: translateZ(0);
+            transition: transform 0.3s ease;
+        }
+
+        /* .container:hover {
+            transform: translateZ(30px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        } */
+
+        #conversation {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.1);
+            perspective: 1000px;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: fadeInUp 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .message.user {
+            text-align: right;
+        }
+
+        .message p {
+            text-align: left;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            max-width: 70%;
+            word-wrap: break-word;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+        }
+
+        .message p::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            border-radius: inherit;
+            top: 0;
+            left: 0;
+            transform: translateZ(-10px);
+            filter: brightness(0.85);
+        }
+
+        .message.user p {
+            background: linear-gradient(145deg, #4A76A8, #395b85);
+            color: white;
+            border-top-right-radius: 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .message.bot p {
+            background: linear-gradient(145deg, #e0e0e0, #c6c6c6);
+            color: black;
+            border-top-left-radius: 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .message p:hover {
+            transform: translateZ(20px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        #userAnswer {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            box-sizing: border-box;
+            font-size: 1rem;
+            resize: none; /* 사용자가 수동으로 크기를 조절하지 못하게 */
+            overflow-y: hidden; /* 스크롤 숨기기 */
+            transition: box-shadow 0.3s ease;
+        }
+
+        #userAnswer:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(74,118,168,0.5);
+        }
+
+        #sendButton {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #4A76A8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #sendButton:hover {
+            background-color: #3a5f8a;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 스크롤바 스타일 */
+        #conversation::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #conversation::-webkit-scrollbar-thumb {
+            background-color: rgba(74,118,168,0.5);
+            border-radius: 4px;
+        }
+
+        /* 오른쪽 하단 고정 버튼 스타일 */
+        #resultButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background-color: #28a745;
+            color: white;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            transform-style: preserve-3d;
+            z-index: 1000;
+        }
+
+        #resultButton::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            border-radius: inherit;
+            top: 0;
+            left: 0;
+            transform: translateZ(-10px);
+            filter: brightness(0.85);
+        }
+
+        #resultButton:hover {
+            transform: translateZ(20px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <!-- 패럴랙스 배경 요소 -->
+    <div class="parallax-bg"></div>
+
+    <div class="container">
+        <h1>면접 진행</h1>
+        <div id="conversation">
+            <!-- 대화 내용이 표시될 영역 -->
+        </div>
+        <div>
+            <textarea id="userAnswer" placeholder="답변을 입력하세요..." rows="1"></textarea>
+            <button id="sendButton">녹음 시작!</button>
+        </div>
+    </div>
+    <audio id="create_audio" autoplay></audio>
+    <!-- 인터뷰 결과 보기 버튼 -->
+    <button id="resultButton" onclick="goToResult()">결과 보기</button>
+
+    <!-- 스크립트 부분 -->
+    <script>
+        let isRecording = false;
+        let mediaRecorder;
+        let audioChunks = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 로컬 스토리지에서 데이터 가져오기
+            const interviewRequestData = localStorage.getItem('interviewRequestData');
+            const textarea = document.getElementById('userAnswer');
+
+            // 입력할 때마다 높이를 조절하는 이벤트 리스너
+            textarea.addEventListener('input', function() {
+                // 높이를 초기화한 후 스크롤 높이로 재설정하여 자동 확장
+                textarea.style.height = 'auto';
+                textarea.style.height = `${textarea.scrollHeight}px`;
+            });
+
+            if (interviewRequestData) {
+                const requestData = JSON.parse(interviewRequestData);
+
+                // FastAPI 엔드포인트로 인터뷰 시작 요청 보내기
+                fetch('api_url/interview/create_interview_tts/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // 면접 질문 표시
+                    const question = data.message;
+                    const sessionId = data.session_id;
+                    const audio = document.getElementById("create_audio");
+                    audio.src = "data:audio/mp3;base64," + data.audio_base64;
+                    audio.load();
+
+                    // 세션 ID를 로컬 스토리지에 저장
+                    localStorage.setItem('sessionId', sessionId);
+
+                    // 대화에 면접관의 질문 추가
+                    addMessage('bot', question);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('인터뷰 시작 중 오류가 발생했습니다.');
+                });
+            } else {
+                alert('인터뷰 정보가 없습니다. 이전 페이지에서 인터뷰를 시작해주세요.');
+                // 필요하다면 이전 페이지로 리디렉션
+                window.location.href = "{% url 'upload_resume' %}";
+            }
+
+            // 전송 버튼 클릭 이벤트
+            document.getElementById('sendButton').addEventListener('click', toggleRecording);
+
+            // 엔터 키 입력 시 전송
+            document.getElementById('userAnswer').addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    toggleRecording();
+                }
+            });
+        });
+
+        // 메시지를 대화 영역에 추가하는 함수
+        function addMessage(sender, text) {
+            const conversation = document.getElementById('conversation');
+
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+
+            const messageText = document.createElement('p');
+            messageText.textContent = text;
+
+            messageDiv.appendChild(messageText);
+            conversation.appendChild(messageDiv);
+
+            // 대화 영역 스크롤을 맨 아래로 내림 (애니메이션 적용)
+            conversation.scrollTo({
+                top: conversation.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        // 녹음 시작 및 중지 함수
+        function toggleRecording() {
+            const sendButton = document.getElementById('sendButton');
+            if (!isRecording) {
+                startRecording();
+                sendButton.textContent = "녹음 중... 다시 눌러 종료";
+            } else {
+                stopRecording();
+                sendButton.textContent = "녹음 종료!";
+                setTimeout(() => {
+                    sendButton.textContent = "녹음 시작!";
+                }, 1000);
+            }
+        }
+
+        // 녹음 시작 함수
+        function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
+                    isRecording = true;
+                    audioChunks = [];
+                    mediaRecorder.addEventListener("dataavailable", event => {
+                        audioChunks.push(event.data);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error accessing microphone:', error);
+                    alert('마이크 접근에 실패했습니다. 권한을 확인해주세요.');
+                });
+        }
+
+        // 녹음 중지 함수
+        function stopRecording() {
+            mediaRecorder.stop();
+            mediaRecorder.addEventListener("stop", () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                sendAudioAnswer(audioBlob);
+                isRecording = false;
+            });
+        }
+
+        // 답변 전송 함수
+        function sendAudioAnswer(audioBlob) {
+            const sessionId = localStorage.getItem('sessionId');
+
+            if (!sessionId) {
+                alert('세션 정보가 없습니다. 인터뷰를 다시 시작해주세요.');
+                window.location.href = "{% url 'upload_resume' %}";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", audioBlob, "answer.wav");
+
+            // FastAPI 엔드포인트로 답변 전송
+            fetch(`api_url/interview/answer_tts/?user_id=${sessionId}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 면접관의 응답 표시
+                const botMessage = data.message[0];
+                const endSignal = data.message[1];
+                const audio = document.getElementById("create_audio");
+                audio.src = "data:audio/mp3;base64," + data.audio_base64;
+                audio.load();
+
+                addMessage('bot', botMessage);
+
+                if (endSignal === 'end') {
+                    alert('인터뷰가 종료되었습니다.');
+                    // 인터뷰 종료 처리
+                    // 필요한 경우 결과 페이지로 이동하거나 추가 처리를 수행하세요.
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('답변 전송 중 오류가 발생했습니다.');
+            });
+        }
+
+        // 결과 보기 버튼 클릭 시 호출되는 함수
+        function goToResult() {
+            window.location.href = "{% url 'interview_result' %}";
+        }
+    </script>
+</body>
+
+</html>

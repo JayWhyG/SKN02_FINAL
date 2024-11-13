@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 및 이력서 업로드 화면</title>
+    <!-- Bootstrap CSS 추가 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts 추가 -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- 커스텀 스타일 -->
+    <style>
+        /* 스타일 설정 */
+        body {
+            background: linear-gradient(-225deg, rgba(0,224,255,0.7), rgba(255,110,255,0.7));
+            background-size: 150% 150%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            font-family: 'Poppins', sans-serif; margin: 0; padding: 0; box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+        @keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+        .main-container {
+            display: flex; justify-content: space-between; background-color: white;
+            padding: 2rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 1200px; max-width: 90vw; position: relative;
+        }
+        .left-container, .middle-container, .right-container {
+            width: 32%; padding: 0 1rem;
+        }
+        h2 {
+            text-align: center; margin-bottom: 1.5rem;
+        }
+        .option-card, .file-upload, .resume-item {
+            background-color: #f9f9f9; padding: 15px; border-radius: 10px;
+            display: flex; align-items: center; cursor: pointer; margin-bottom: 10px;
+            border: 2px solid transparent; transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+        .option-card:hover, .file-upload:hover, .resume-item:hover {
+            border-color: #6c63ff;
+        }
+        .option-card.active, .resume-item.active {
+            border-color: #6c63ff; background-color: #e0e7ff;
+        }
+        .option-card i, .file-upload i {
+            font-size: 1.5rem; color: #6c63ff; margin-right: 15px;
+        }
+        .option-card label, .option-card p, .file-upload label, .resume-item p {
+            margin: 0; font-weight: 500; cursor: pointer; flex-grow: 1; text-align: left;
+        }
+        input[type="radio"], input[type="file"] {
+            display: none;
+        }
+        .submit-button, .start-button {
+            width: 100%; padding: 0.75rem; background-color: #6c63ff; color: white;
+            border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; margin-top: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+        .submit-button:hover, .start-button:hover, .resume-item button:hover {
+            background-color: #5753d1;
+        }
+        .submit-button:disabled {
+            background: #ccc; cursor: not-allowed; color: #666;
+        }
+        .submit-button:disabled:hover {
+            background: #ccc;
+        }
+
+        .user-info {
+            position: absolute; top: 10px; left: 10px; font-size: 1rem;
+            background-color: #6c63ff; color: white; padding: 0.5rem 1rem; border-radius: 5px;
+        }
+        .no-resume {
+            text-align: center; color: #ff0000; margin-top: 1.5rem;
+        }
+
+        /* 추가된 스타일 */
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+            /* 스크롤을 위한 스타일 */
+        .resume-list, .company-list, .job-list {
+            max-height: 250px; /* 4개 이상의 아이템을 표시할 높이 */
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .resume-list .resume-item, .company-list .option-card, .job-list .option-card {
+            margin-bottom: 10px; /* 아이템 사이 여백 */
+        }
+
+        /* 스크롤바 스타일 */
+        .resume-list::-webkit-scrollbar, .company-list::-webkit-scrollbar, .job-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .resume-list::-webkit-scrollbar-thumb, .company-list::-webkit-scrollbar-thumb, .job-list::-webkit-scrollbar-thumb {
+            background-color: #6c63ff;
+            border-radius: 4px;
+        }
+
+        .logout-button {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+        .logout-button:hover {
+            background-color: #ff4b4b;
+        }
+        .delete-button {
+            width: 33%; padding: 0.75rem; background-color: #6c63ff; color: white;
+            border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; margin-top: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        {% if user.is_authenticated %}
+        <div class="user-info">
+            안녕하세요, {{ user.username }}님!
+            <button type="button" class="logout-button" onclick="logout()">로그아웃</button>
+        </div>
+        {% endif %}
+        <div class="left-container">
+            <h2 style="margin-top: 2rem;">이력서 업로드</h2>
+            <form id="resumeUploadForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="file-upload">
+                    <i class="fas fa-upload"></i>
+                    <label for="file-upload">이력서 파일 선택</label>
+                    <input type="file" name="file" id="file-upload" required>
+                </div>
+                <div class="input-group">
+                    <label for="resume-name">이력서 이름 입력</label>
+                    <input type="text" name="이력서_이름" id="resume-name" required>
+                </div>
+                <button type="button" class="submit-button" style="margin-bottom: 2rem;" id="upload-button" onclick="uploadResume()" disabled>Upload Resume</button>
+            </form>
+        
+            <!-- 이력서 목록을 스크롤 가능하게 감싸기 -->
+            <div id="message"></div>
+            {% if resumes %}
+            <h2>나의 이력서</h2>
+            <div class="resume-list">
+                {% for resume in resumes %}
+                <div class="resume-item" onclick="selectResume('{{ resume.이력서_아이디 }}', this)">
+                    <p>{{ resume.이력서_이름 }}</p>
+                    <button type="button" class="delete-button" onclick="deleteResume('{{ resume.이력서_아이디 }}')">삭제</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-resume">
+                <h2>업로드된 이력서 없음</h2>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 기존의 right-container를 middle-container로 변경 -->
+        <div class="middle-container">
+            <h2>면접 분위기</h2>
+            <form id="difficultyForm">
+                <div class="option-card difficulty-option" onclick="selectDifficultyOption(this)">
+                    <input type="radio" id="easy" name="difficulty" value="easy" required>
+                    <i class="fas fa-fist-raised"></i>
+                    <label for="easy">유연 면접</label>
+                </div>
+                <div class="option-card difficulty-option" onclick="selectDifficultyOption(this)">
+                    <input type="radio" id="medium" name="difficulty" value="medium" required>
+                    <i class="fas fa-user-tie"></i>
+                    <label for="medium">일반 면접</label>
+                </div>
+                <div class="option-card difficulty-option" onclick="selectDifficultyOption(this)">
+                    <input type="radio" id="hard" name="difficulty" value="hard" required>
+                    <i class="fas fa-hands-helping"></i>
+                    <label for="hard" style="margin-left: -9px;">압박 면접</label>
+                </div>
+            </form>
+            <h2>면접 난이도</h2>
+            <form id="levelForm">
+                <div class="option-card level-option" onclick="selectLevelOption(this)">
+                    <input type="radio" id="level1" name="level" value="level1" required>
+                    <i class="fas fa-star"></i>
+                    <label for="level1">기본</label>
+                </div>
+                <div class="option-card level-option" onclick="selectLevelOption(this)">
+                    <input type="radio" id="level2" name="level" value="level2" required>
+                    <i class="fas fa-star-half-alt"></i>
+                    <label for="level2">실무</label>
+                </div>
+                <div class="option-card level-option" onclick="selectLevelOption(this)">
+                    <input type="radio" id="level3" name="level" value="level3" required>
+                    <i class="fas fa-star-of-life"></i>
+                    <label for="level3" style="margin-left: 3px;">심화</label>
+                </div>
+            </form>
+            <!-- 버튼 위치 조정 -->
+            <button type="button" class="start-button" onclick="startInterview()">면접 시작</button>
+        </div>
+
+        <!-- 새로운 오른쪽 컨테이너 추가 -->
+        <div class="right-container">
+            <h2>기업</h2>
+            <form id="companyForm">
+                <!-- 기업 목록을 스크롤 가능하게 감싸기 -->
+                <div class="company-list">
+                    {% for company in companies %}
+                    <div class="option-card company-option" onclick="selectCompanyOption(this, '{{ company.기업정보_아이디 }}')">
+                        <input type="radio" id="company{{ forloop.counter }}" name="company" value="{{ company.기업정보_아이디 }}" required>
+                        <i class="fas fa-building"></i>
+                        <label for="company{{ forloop.counter }}">{{ company.기업_이름 }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </form>
+            
+            <h2>직무</h2>
+            <form id="jobForm">
+                <!-- 직무 목록을 스크롤 가능하게 감싸기 -->
+                <div class="job-list">
+                    {% for job in jobs %}
+                    <div class="option-card job-option" onclick="selectJobOption(this, '{{ job.직무정보_아이디 }}')">
+                        <input type="radio" id="job{{ forloop.counter }}" name="job" value="{{ job.직무정보_아이디 }}" required>
+                        <i class="fas fa-briefcase"></i>
+                        <label for="job{{ forloop.counter }}">{{ job.직무_이름 }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let selectedResumeId = null;
+        let selectedDifficulty = null;
+        let selectedLevel = null;
+        let selectedCompanyId = null;
+        let selectedJobId = null;
+        
+        // 면접 시작 함수
+        function startInterview() {
+            // 선택된 값들이 모두 있는지 확인
+            if (!selectedResumeId || !selectedDifficulty || !selectedLevel || !selectedCompanyId || !selectedJobId) {
+                alert("이력서, 면접 분위기, 난이도, 기업, 직무를 모두 선택해주세요.");
+                return;
+            }
+
+            // 사용자 ID (로그인한 사용자)
+            const userId = "{{ user.id }}";  // Django 템플릿에서 사용자 ID를 가져옴
+
+            // 면접 분위기 매핑 (예: easy -> soft)
+            const interviewStyleMap = {
+                "easy": "soft",
+                "medium": "general",
+                "hard": "pressure"
+            };
+
+            // 난이도 매핑 (예: level1 -> 1)
+            const difficultyLevelMap = {
+                "level1": 1,
+                "level2": 2,
+                "level3": 3
+            };
+
+            // 데이터 객체 생성
+            const requestData = {
+                user_id: userId,
+                resume_id: selectedResumeId,
+                corporate_id: selectedCompanyId,
+                job_id: selectedJobId,
+                interview_style: interviewStyleMap[selectedDifficulty],
+                difficulty_level: difficultyLevelMap[selectedLevel]
+            };
+
+            // 선택한 값들을 로컬 스토리지에 저장
+            localStorage.setItem('interviewRequestData', JSON.stringify(requestData));
+
+            // 면접 질문 페이지로 이동
+            window.location.href = "{% url 'question' %}"; // 다음 페이지 경로
+        }
+
+        // 기존 선택 함수들
+        // 이력서 선택 함수
+        function selectResume(resumeId, element) {
+            // 모든 이력서 항목에서 'active' 클래스를 제거
+            const items = document.querySelectorAll('.resume-item');
+            items.forEach(item => item.classList.remove('active'));
+
+            // 클릭된 항목에 'active' 클래스 추가
+            element.classList.add('active');
+            
+            // 선택된 이력서 ID 저장
+            selectedResumeId = resumeId;
+        }
+
+        // 면접 분위기 선택 함수
+        function selectDifficultyOption(element) {
+            // 모든 면접 분위기 옵션에서 'active' 클래스를 제거
+            const options = document.querySelectorAll('.difficulty-option');
+            options.forEach(option => option.classList.remove('active'));
+
+            // 클릭된 옵션에 'active' 클래스 추가
+            element.classList.add('active');
+            
+            // 선택된 면접 분위기 값 저장
+            selectedDifficulty = element.querySelector('input[name="difficulty"]').value;
+        }
+
+        // 면접 난이도 선택 함수
+        function selectLevelOption(element) {
+            // 모든 면접 난이도 옵션에서 'active' 클래스를 제거
+            const options = document.querySelectorAll('.level-option');
+            options.forEach(option => option.classList.remove('active'));
+
+            // 클릭된 옵션에 'active' 클래스 추가
+            element.classList.add('active');
+            
+            // 선택된 난이도 값 저장
+            selectedLevel = element.querySelector('input[name="level"]').value;
+        }
+
+        // 기업 선택 함수
+        function selectCompanyOption(element, companyId) {
+            // 모든 기업 옵션에서 'active' 클래스를 제거
+            const options = document.querySelectorAll('.company-option');
+            options.forEach(option => option.classList.remove('active'));
+
+            // 클릭된 옵션에 'active' 클래스 추가
+            element.classList.add('active');
+            
+            // 선택된 기업 ID 저장
+            selectedCompanyId = companyId;
+
+            fetch(`/membership/api/jobs/${companyId}/`)
+            .then(response => response.json())
+            .then(data => {
+                const jobListContainer = document.querySelector('.job-list');
+                jobListContainer.innerHTML = ''; // 기존 직무 목록 초기화
+
+                data.forEach(job => {
+                    const jobOption = document.createElement('div');
+                    jobOption.classList.add('option-card', 'job-option');
+                    jobOption.setAttribute('onclick', `selectJobOption(this, '${job.직무정보_아이디}')`);
+                    jobOption.innerHTML = `
+                        <input type="radio" id="job${job.직무정보_아이디}" name="job" value="${job.직무정보_아이디}" required>
+                        <i class="fas fa-briefcase"></i>
+                        <label for="job${job.직무정보_아이디}">${job.직무_이름}</label>
+                    `;
+                    jobListContainer.appendChild(jobOption);
+                });
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        // 직무 선택 함수
+        function selectJobOption(element, jobId) {
+            // 모든 직무 옵션에서 'active' 클래스를 제거
+            const options = document.querySelectorAll('.job-option');
+            options.forEach(option => option.classList.remove('active'));
+
+            // 클릭된 옵션에 'active' 클래스 추가
+            element.classList.add('active');
+            
+            // 선택된 직무 ID 저장
+            selectedJobId = jobId;
+        }
+        
+        document.getElementById('file-upload').addEventListener('change', function() {
+            const uploadButton = document.getElementById('upload-button');
+            uploadButton.disabled = !this.files.length; // 파일이 없으면 비활성화, 있으면 활성화
+        });
+
+        // 이력서 업로드 함수 아.. 이거 설마 view에 있는 거 호출해서 그런 거 아님?
+        function uploadResume2() {
+            const form = document.getElementById('resumeUploadForm');
+            const formData = new FormData(form);
+            const messageDiv = document.getElementById('message');
+
+            // 화면에 표시할 이력서 이름 가져오기
+            const resumeName = document.getElementById('resume-name').value;
+            formData.append('resume_name', resumeName); // 폼 데이터에 이력서 이름 추가
+            
+            // 이력서 업로드 요청 보내기
+            fetch('/membership/upload_resume_to_fastapi/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    // 성공 메시지 표시
+                    messageDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                    location.reload();
+                } else if (data.error) {
+                    // 오류 메시지 표시
+                    messageDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                messageDiv.innerHTML = `<div class="alert alert-danger">업로드 중 오류가 발생했습니다. 다시 시도해주세요.</div>`;
+            });
+        }
+
+
+        function uploadResume() {
+            const form = document.getElementById('resumeUploadForm');
+            if (!form) {
+                console.error('Form element not found');
+                return;
+            }
+            const formData = new FormData();
+            const messageDiv = document.getElementById('message');
+
+            // 화면에 표시할 이력서 파일 가져오기
+            const fileInput = document.getElementById('file-upload');
+            if (!fileInput || !fileInput.files.length) {
+                console.error('File element not found or no file selected');
+                return;
+            }
+            const file = fileInput.files[0];
+            formData.append('file', file); // 폼 데이터에 파일 추가
+
+            // 화면에 표시할 이력서 이름 가져오기
+            const resumeNameElement = document.getElementById('resume-name');
+            if (!resumeNameElement) {
+                console.error('Resume name element not found');
+                return;
+            }
+            const resumeName = resumeNameElement.value;
+            formData.append('resume_name', resumeName); // 폼 데이터에 이력서 이름 추가
+
+            // 사용자 ID 가져오기 (템플릿에서 사용자 ID를 문자열로 설정)
+            const userId = "{{ user.id }}";  // Django 템플릿에서 사용자 ID를 가져옴
+            if (!userId) {
+                console.error('User ID not found');
+                return;
+            }
+            formData.append('user_id', userId); // 폼 데이터에 사용자 아이디 추가
+
+            // FastAPI로 이력서 업로드 요청 보내기
+            fetch('api_url/db/upload_resume/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    // 헤더 설정 생략: FormData는 브라우저가 자동으로 Content-Type을 설정함
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.message) {
+                    // 성공 메시지 표시
+                    messageDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                    location.reload();
+                } else if (data.error) {
+                    // 오류 메시지 표시
+                    messageDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                messageDiv.innerHTML = `<div class="alert alert-danger">업로드 중 오류가 발생했습니다. 다시 시도해주세요.</div>`;
+            });
+        }
+
+
+
+
+
+
+
+
+        function logout() {
+            fetch('/membership/logout/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}' // Django CSRF 토큰
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // 로그아웃 성공 시 로그인 페이지로 이동
+                    window.location.href = "{% url 'login' %}";
+                } else {
+                    alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        function deleteResume(resumeId) {
+            if (!confirm("정말로 이력서를 삭제하시겠습니까?")) return;
+
+            fetch(`/membership/delete_resume/${resumeId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                location.reload();
+                if (data.success) {
+                    // 삭제된 항목을 화면에서 제거
+                    document.getElementById(`resume-${resumeId}`).remove();
+                    alert("이력서가 삭제되었습니다.");
+                    
+                } else {
+                    alert("이력서 삭제에 실패했습니다.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>

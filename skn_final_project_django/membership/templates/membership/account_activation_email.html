@@ -1,0 +1,5 @@
+안녕하세요 {{ user.username }}님,
+
+다음 링크를 클릭하여 계정을 활성화하세요:
+
+http://{{ domain }}{% url 'activate' uidb64=uid token=token %}

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+{% load markdownify %}
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>면접 결과</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      crossorigin="anonymous"
+    />
+    <!-- Chart.js 라이브러리 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            margin: 0; padding: 0; font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, rgba(0,224,255,0.7), rgba(255,110,255,0.7));
+            height: 100vh; overflow: hidden;
+        }
+        .navbar {
+            display: flex; align-items: center;
+            background: linear-gradient(135deg, rgba(255,110,255, 0.7), rgba(0,224,255, 0.7));
+            color: white; padding: 0.5rem 1rem; position: fixed; top: 0;
+            width: 100%; z-index: 1000; height: 50px; box-sizing: border-box;
+        }
+        .panel {
+            background-color: rgba(255,255,255,0.9); border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 45%;
+            display: flex; flex-direction: column; overflow: hidden;
+            max-height: calc(100vh - 60px); transition: background-color 0.3s ease;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, rgba(0,224,255,0.7), rgba(255,110,255,0.7));
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3); border-radius: 15px;
+            color: white; padding: 1rem; display: flex;
+            justify-content: space-between; align-items: center;
+            font-size: 1.5rem; box-sizing: border-box; flex-shrink: 0;
+        }
+        .navbar .nav-button {
+            margin-right: 1rem; cursor: pointer; color: white; z-index: 1;
+            text-decoration: none; display: flex; align-items: center;
+        }
+        .navbar .nav-button:hover {
+            text-decoration: underline;
+        }
+        .navbar .title {
+            flex: 1; text-align: center; font-size: 1.5rem;
+        }
+
+        .container {
+            display: flex; justify-content: center; align-items: flex-start;
+            height: calc(100vh - 50px); margin-top: 50px; padding: 1rem;
+            box-sizing: border-box; gap: 1rem;
+        }
+        .panel {
+            background: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 45%; display: flex; flex-direction: column; overflow: hidden;
+            max-height: calc(100vh - 100px); transition: background-color 0.3s ease; margin-top: 10px;
+        }
+        @media (max-width: 768px) {
+            .container { flex-direction: column; align-items: center; height: calc(100vh - 50px); margin-top: 50px; padding: 0.5rem; }
+            .panel { width: 90%; margin: 1rem 0; }
+            .chat-search { position: static; transform: none; margin-top: 0.5rem; width: 100%; display: flex; justify-content: center; }
+            .chat-search input { width: 100px; padding: 0.2rem 0.3rem; font-size: 0.8rem; }
+        }
+
+        .chat-messages {
+            flex: 1; padding: 1rem; overflow-y: auto; background-color: #f0f2f5; min-height: 1000px;
+        }
+        .chat-messages::-webkit-scrollbar, .feedback-content::-webkit-scrollbar { width: 8px; }
+        .chat-messages::-webkit-scrollbar-track, .feedback-content::-webkit-scrollbar-track { background: #f1f1f1; }
+        .chat-messages::-webkit-scrollbar-thumb, .feedback-content::-webkit-scrollbar-thumb { background: #4A76A8; border-radius: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb:hover, .feedback-content::-webkit-scrollbar-thumb:hover { background: #333; }
+        .chat-header {
+            background: radial-gradient(circle, #007bff, #0056b3); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); border-radius: 15px; color: white; padding: 1rem;
+            display: flex; justify-content: space-between; align-items: center; font-size: 1.5rem; box-sizing: border-box; flex-shrink: 0;
+        }
+        .chat-search input {
+            width: 150px; padding: 0.2rem 0.4rem; font-size: 0.9rem; border-radius: 5px; border: none; outline: none; box-sizing: border-box;
+        }
+        .chat-search input:focus {
+            box-shadow: 0 0 5px rgba(74, 118, 168, 0.5);
+        }
+        
+        .question {
+            align-self: flex-start; background-color: #f1f0f0; color: black; border-top-left-radius: 0;
+        }
+        .answer {
+            align-self: flex-end; background-color: #a3d8f4; color: black; border-top-right-radius: 0;
+        }
+        .message .timestamp {
+            font-size: 0.75rem; color: #999; margin-top: 0.5rem;
+        }
+        .message {
+            max-width: 80%; margin-bottom: 1rem; padding: 0.75rem 1rem;
+            border-radius: 20px; line-height: 1.5; cursor: pointer; position: relative;
+            overflow: hidden; /* 내용이 넘칠 때 숨기기 */
+            transition: all 0.3s ease; /* 크기 변화를 부드럽게 */
+        }
+        .message .hidden-answer {
+            position: absolute; top: 0; left: 0; right: 0; min-height: 100px;
+            background-color: rgba(255, 255, 255, 0.95); color: #555; font-size: 0.9rem;
+            padding: 0.75rem 1rem; border-radius: 20px; line-height: 1.5;
+            opacity: 0; transform: scaleY(0); transform-origin: top;
+            transition: all 0.5s ease; /* 애니메이션 효과 */
+        }
+        .message:hover {
+            max-height: none; /* 최대 높이 제한 해제 */
+        }
+        .message:hover .hidden-answer {
+            opacity: 1; transform: scaleY(1); /* 모범답변 표시 및 확장 */
+            position: static; /* 부모 요소에 맞게 확장 */
+            margin-top: -15%;
+            height: fit-content;
+        }
+        .message.fade-out { opacity: 0; transform: scale(0.95); }
+        .message.fade-in { opacity: 1; transform: scale(1); }
+        .message.question {
+            align-self: flex-start; background-color: #f1f0f0; color: black; border-top-left-radius: 0;
+        }
+        .message.answer {
+            align-self: flex-end; background: linear-gradient(145deg, #a3d8f4, #74b0e4); color: black;
+            border-top-right-radius: 0; border-radius: 20px; position: relative; overflow: hidden;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2), -5px -5px 15px rgba(255, 255, 255, 0.7),
+                        inset 0 1px 3px rgba(255, 255, 255, 0.5), inset 0 -1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s;
+            transform: perspective(500px) rotateX(0deg) scale(1);
+        }
+        .message.answer:hover {
+            transform: perspective(500px) rotateX(5deg) translateY(-3px) scale(1.05);
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.25), -8px -8px 20px rgba(255, 255, 255, 0.8);
+        }
+        .message.answer.fade-out {
+            opacity: 0; transform: perspective(500px) rotateX(0deg) scale(0.95);
+        }
+        .message.answer.fade-in {
+            opacity: 1; transform: perspective(500px) rotateX(0deg) scale(1);
+        }
+        .message.answer::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: rgba(255, 255, 255, 0.3); transform: rotate(45deg); animation: shine 4s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); opacity: 0; }
+            50% { opacity: 0.3; }
+            100% { transform: translateX(100%) rotate(45deg); opacity: 0; }
+        }
+        .message .timestamp {
+            font-size: 0.75rem; color: #999; position: absolute; bottom: -1.2rem; right: 0.5rem;
+        }
+
+        .right-panel { padding: 1rem; box-sizing: border-box; position: relative; }
+        .right-panel .top-section { display: flex; justify-content: space-between; align-items: flex-start; }
+        .right-panel .score-chart { width: 35%; position: relative; padding: 5%; }
+        .right-panel .score-chart canvas { width: 100%; height: auto; }
+        .right-panel .overall-comment { width: 50%; }
+        .right-panel .overall-comment h2 { margin-top: 0; }
+        .right-panel .bottom-section {
+            margin-top: 1rem; overflow-x: auto; white-space: nowrap; display: flex; flex-wrap: nowrap;
+            width: 100%; box-sizing: border-box; scrollbar-width: none; -ms-overflow-style: none;
+        }
+        .right-panel .scroll-box::-webkit-scrollbar {
+            display: none;
+        }
+        .right-panel .scroll-box {
+            flex: 0 0 auto; display: inline-block; background-color: #f9f9f9; padding: 1rem; overflow-y: auto; scrollbar-width: none;
+            margin-right: 1rem; border-radius: 10px; width: 200px; min-height: 300px; vertical-align: top; text-overflow: ellipsis; word-wrap: break-word; white-space: normal;
+            box-shadow: 4px 4px 10px rgba(0,0,0,0.3), -4px -4px 10px rgba(255,255,255,0.3); /* 입체감 */
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .right-panel .scroll-box:last-child { margin-right: 0; }
+        .scroll-box:nth-child(2n-1) { background: linear-gradient(135deg, rgba(0,224,255,0.3), rgba(255,110,255,0.3)); }
+        .scroll-box:nth-child(2n) { background: linear-gradient(135deg, rgba(255,110,255,0.3), rgba(0,224,255,0.3)); }
+        #right-overlay {
+            position: absolute; top: 50%; left: 50%; width: 80%; height: 80%; padding: 5%;
+            background-color: #fff; z-index: 100; visibility: hidden; opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 10px; transform: translate(-50%, -50%) scale(0.5);
+            transform-origin: 600px 100px;
+        }
+        #right-overlay.active { visibility: visible; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+        .sum-box {
+            flex: 0 0 auto; display: inline-block; background: rgba(240, 240, 240, 0.9); padding: 1rem; 
+            margin: 3% 1rem 0 0; border-radius: 10px; min-width: 200px; height: 290px; vertical-align: top; 
+            cursor: pointer; overflow: hidden; text-overflow: ellipsis;
+            box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.1), -8px -8px 15px rgba(255, 255, 255, 0.8), 
+                        inset 0 1px 2px rgba(255, 255, 255, 0.5), inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .sum-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.15), -10px -10px 20px rgba(255, 255, 255, 0.9);
+        }
+        .user-info {
+            position: absolute; top: 5px; right: 10px; font-size: 1rem; background: #6c63ff;
+            color: #fff; padding: 0.5rem 1rem; border-radius: 5px;
+        }
+
+        .slide-panel {
+            position: fixed; top: 10%; left: 0; width: 250px; height: 30%;
+            background: linear-gradient(135deg, #f0f0f0, #d9d9d9); transform: translateX(-100%);
+            transition: 0.3s ease; box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3); padding: 20px;
+            z-index: 1000; overflow-y: auto; scrollbar-width: none;
+        }
+        .slide-panel::-webkit-scrollbar { display: none; }
+        .slide-panel.active { transform: translateX(0); }
+        .slide-panel h2 {
+            font-size: 1.5rem; color: #333; text-align: center; margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        .slide-panel ul { list-style: none; padding: 0; margin: 0; }
+        .slide-panel ul li {
+            padding: 10px 15px; margin: 5px 0; border-radius: 8px;
+            font-size: 1rem; font-weight: 500; color: #555; background: #fff;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); cursor: pointer;
+            transition: 0.3s ease; 
+        }
+        .slide-panel ul li:hover {
+            background: #4A76A8; color: #fff; font-weight: 600;
+            transform: translateX(5px); box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .toggle-button {
+            position: fixed; top: 10%; left: 0; width: 40px; height: 40px; background: #333;
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s; z-index: 1000;
+        }
+        .toggle-button.active { transform: translateX(250px); }
+        .scroll-box, .bottom-section {
+            scrollbar-width: thin;
+            scrollbar-color: #4A76A8 #f1f1f1;
+        }
+        .scroll-box::-webkit-scrollbar, .bottom-section::-webkit-scrollbar { width: 8px; display: none;}
+        .scroll-box::-webkit-scrollbar-track, .bottom-section::-webkit-scrollbar-track { background: #f1f1f1; }
+        .scroll-box::-webkit-scrollbar-thumb, .bottom-section::-webkit-scrollbar-thumb { background: #4A76A8; border-radius: 4px; }
+        .scroll-box::-webkit-scrollbar-thumb:hover, .bottom-section::-webkit-scrollbar-thumb:hover { background: #333; }
+
+    </style>
+</head>
+<body>
+    <!-- 메뉴 표시줄 -->
+    <div class="navbar">
+        <a href="/membership/upload_resume" class="nav-button" id="back-button">
+            <i class="fas fa-arrow-left"></i> 준비화면
+        </a>
+        <a href="/membership/main" class="nav-button">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <div class="title" style="margin-left: -10%;">면접 결과</div>
+        {% if user.is_authenticated %}
+        <div class="user-info">
+            안녕하세요, {{ user.username }}님!
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="slide-panel" id="slidePanel">
+        <h2 style="padding-left: 15%;">면접기록</h2>
+        <ul>
+            {% for interview_id in interview_record_all %}
+            <li onclick="loadInterview('{{ interview_id.면접기록_아이디 }}')">면접기록 - {{ interview_id.면접_일시|date:"Y-m-d H:i" }}</li>
+            {% empty %}
+                <li>면접 기록이 없습니다.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="toggle-button" id="toggleButton">&#9776;</div>
+
+    <div class="container">
+        <!-- 왼쪽 채팅 기록 창 -->
+        <div class="panel left-panel">
+            <div class="chat-header">
+                <span>면접 채팅 기록</span>
+                <div class="chat-search">
+                    <input type="text" id="chat-search-input" placeholder="검색..." aria-label="채팅 검색">
+                </div>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <!-- 질문 데이터를 반복하여 출력 -->
+                {% for question in question_data %}
+                <div class="message question">
+                    <span class="message-text">{{ question.질문_내용 }}</span>
+                    <div class="timestamp">질문</div>
+                </div>
+                <div class="message answer" data-model-answer="{{ question.모범답변 }}">
+                    <span class="message-text">{{ question.사용자_답변 }}</span>
+                    <div class="timestamp">답변</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- 오른쪽 피드백 창 -->
+        <div class="panel right-panel">
+            <div class="overlay" id="right-overlay">
+                <div class="overlay-content">
+                    <h2 style="text-align: center;">A.I 면접 평가</h2>
+                    <p>{{ overall_comment|markdownify }}</p>
+                </div>
+            </div>
+            <!-- 상단 섹션 -->
+            <div class="top-section">
+                <!-- 좌상단: 원그래프와 총점 -->
+                <div class="score-chart">
+                    <canvas id="scoreChart"></canvas>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        <h2 style="margin: 0; text-align: center;">총점</h2>
+                        <!-- <p style="margin: 0; font-size: 2rem; text-align: center;">{{ total_score }}/100</p> -->
+                        <p style="margin: 0; font-size: 2rem; text-align: center;">85/100</p>
+                    </div>
+                </div>
+                <!-- 우상단: 총평 -->
+                <div class="overall-comment sum-box">
+                    <p>{{ overall_comment|markdownify }}</p>
+                </div>
+            </div>
+            <!-- 하단 섹션: 좌우로 스크롤되는 박스 -->
+            <div class="bottom-section">
+                {% for question in question_data %}
+                <div class="scroll-box">
+                    <strong>질문:</strong>
+                    <p>{{ question.질문_내용 }}</p>
+                </div>
+                <div class="scroll-box">
+                    <strong>피드백:</strong>
+                    <p>{{ question.피드백_내용 }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('chat-search-input');
+        const messages = document.querySelectorAll('.message');
+        searchInput.addEventListener('keyup', () => {
+            const searchText = searchInput.value.toLowerCase();
+            messages.forEach(msg => {
+                msg.style.display = msg.querySelector('.message-text').textContent.toLowerCase().includes(searchText) ? 'flex' : 'none';
+            });
+        });
+        // 답변 메시지에 마우스 호버 이벤트 추가
+        const answerMessages = document.querySelectorAll('.message.answer');
+        answerMessages.forEach(msg => {
+            const originalText = msg.querySelector('.message-text').textContent;
+            const modelAnswer = msg.getAttribute('data-model-answer');
+
+            msg.addEventListener('mouseenter', () => {
+                msg.querySelector('.message-text').textContent = modelAnswer;
+            });
+
+            msg.addEventListener('mouseleave', () => {
+                msg.querySelector('.message-text').textContent = originalText;
+            });
+        });
+        
+        // 뒤로가기 버튼
+        document.getElementById('back-button').addEventListener('click', e => {
+            e.preventDefault(); window.history.back();
+        });
+        // Chart.js 원그래프 생성
+        const ctx = document.getElementById('scoreChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: { datasets: [{ data: [85, 15], backgroundColor: ['#007bff', '#E0E0E0'], borderWidth: 0 }] },
+            options: { cutout: '80%', plugins: { legend: { display: false } }, tooltips: { enabled: false } }
+        });
+        document.querySelector('.bottom-section').addEventListener('wheel', e => {
+            e.preventDefault(); e.currentTarget.scrollLeft += e.deltaY;
+        });
+        // .sum-box 이벤트 리스너
+        const sumBoxes = document.querySelectorAll('.sum-box');
+        const rightOverlay = document.getElementById('right-overlay');
+        sumBoxes.forEach(box => {
+            box.addEventListener('mouseenter', () => rightOverlay.classList.add('active'));
+            box.addEventListener('mouseleave', () => rightOverlay.classList.remove('active'));
+        });
+        const slidePanel = document.getElementById('slidePanel'), toggleButton = document.getElementById('toggleButton');
+        toggleButton.addEventListener('mouseenter', () => slidePanel.classList.add('active'), toggleButton.classList.add('active'));
+        slidePanel.addEventListener('mouseleave', () => slidePanel.classList.remove('active'), toggleButton.classList.remove('active'));
+        // 면접 기록 불러오기 (AJAX 요청 예시)
+        function loadInterview(interviewId) {
+            fetch(`/membership/api/interview/${interviewId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('chat-messages');
+                    container.innerHTML = ""; // 기존 내용을 비우기
+                    data.questions.forEach(question => {
+                        container.innerHTML += `
+                            <div class="message question">
+                                <span class="message-text">${question.질문_내용}</span>
+                                <div class="timestamp">질문</div>
+                            </div>
+                            <div class="message answer" data-model-answer="${question.모범답변}">
+                                <span class="message-text">${question.사용자_답변}</span>
+                                <div class="timestamp">답변</div>
+                            </div>
+                        `;
+                    });
+                    updateAnswerHoverEvents();
+                    const feedbackContainer = document.querySelector('.bottom-section');
+                    feedbackContainer.innerHTML = ""; // 기존 피드백 내용 비우기
+                    data.questions.forEach(question => {
+                        feedbackContainer.innerHTML += `
+                            <div class="scroll-box">
+                                <strong>질문:</strong>
+                                <p>${question.질문_내용}</p>
+                            </div>
+                            <div class="scroll-box">
+                                <strong>피드백:</strong>
+                                <p>${question.피드백_내용}</p>
+                            </div>
+                        `;
+                    });
+                    const overallCommentElements = document.querySelectorAll('.overall-comment p');
+                    overallCommentElements.forEach(element => {
+                        element.innerHTML = marked.parse(data.overall_comment); // 마크다운을 HTML로 변환하여 삽입
+                    });
+                    const overlayCommentElement = document.querySelector('#right-overlay .overlay-content p');
+                    overlayCommentElement.textContent = data.overall_comment;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function updateAnswerHoverEvents() {
+            const answerMessages = document.querySelectorAll('.message.answer');
+            answerMessages.forEach(msg => {
+                const originalText = msg.querySelector('.message-text').textContent;
+                const modelAnswer = msg.getAttribute('data-model-answer');
+
+                msg.addEventListener('mouseenter', () => {
+                    msg.querySelector('.message-text').textContent = modelAnswer;
+                });
+
+                msg.addEventListener('mouseleave', () => {
+                    msg.querySelector('.message-text').textContent = originalText;
+                });
+            });
+        }
+
+        // 페이지 로드 시 초기 .message.answer 요소에 hover 이벤트 추가
+        updateAnswerHoverEvents();
+    </script>
+</body>
+</html>

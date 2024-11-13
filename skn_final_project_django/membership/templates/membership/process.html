@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>질문과 답변 페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+        }
+        .question-container {
+            margin-bottom: 1rem;
+        }
+        .question {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .answer-container {
+            margin-bottom: 1rem;
+        }
+        .answer-input {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+        }
+        .submit-button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .response-message {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="question-container">
+        <div class="question" id="question"></div>
+    </div>
+    <div class="answer-container">
+        <label for="answer">답변을 입력하세요:</label><br>
+        <textarea id="answer" class="answer-input" rows="5"></textarea>
+    </div>
+    <button class="submit-button" onclick="submitAnswer()">제출</button>
+
+    <div class="response-message" id="response"></div>
+
+    <script>
+        // 질문 배열
+        const questions = [
+            "당신의 가장 큰 장점은 무엇인가요?",
+            "최근에 읽은 책 중에서 인상 깊었던 것은 무엇인가요?",
+            "팀 프로젝트에서 갈등을 해결한 경험이 있나요?",
+            "스트레스를 어떻게 해소하나요?",
+            "미래에 이루고 싶은 목표는 무엇인가요?"
+        ];
+
+        // 랜덤으로 질문 선택
+        const randomIndex = Math.floor(Math.random() * questions.length);
+        const selectedQuestion = questions[randomIndex];
+
+        // 질문을 페이지에 표시
+        document.getElementById('question').innerText = selectedQuestion;
+
+        // 답변 제출 함수
+        function submitAnswer() {
+            const answer = document.getElementById('answer').value;
+            if (answer.trim() === '') {
+                alert('답변을 입력해주세요.');
+            } else {
+                // 여기에서 서버로 답변을 전송하거나 추가 처리를 할 수 있습니다.
+                document.getElementById('response').innerText = '답변이 제출되었습니다. 감사합니다!';
+                // 입력 필드 비우기
+                document.getElementById('answer').value = '';
+                // 새로운 질문으로 갱신하려면 아래 코드를 사용하세요.
+                // location.reload();
+            }
+        }
+    </script>
+
+</body>
+</html>

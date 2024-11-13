@@ -1,0 +1,13 @@
+
+# __pycache__ 무시
+membership/__pycache__
+
+membership/migrations/__pycache__
+
+test_final/__pycache__
+
+# 임시파일 무시
+*copy.*
+
+# 가상환경 무시
+testenv
