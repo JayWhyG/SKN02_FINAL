@@ -129,7 +129,8 @@ AI 모의면접 서비스
   <summary>1. 메인화면</summary>
   
   - '지금 시작하기' 클릭 시 로그인 창으로 이동<br>
-      <img src="https://github.com/user-attachments/assets/b6a1306e-736f-4de2-91d1-8a70f07b7ca3" width="600px">
+      <img src="https://github.com/user-attachments/assets/2b130d35-35ac-45f8-b1d0-3173a7ab307c" width="600px"><br>
+      <img src="https://github.com/user-attachments/assets/0bf1fffe-51a9-4ab4-b8cd-9cfa28be26d5" width="600px">
   
 </details>
 
@@ -151,9 +152,11 @@ AI 모의면접 서비스
   <summary>3. 면접 진행 화면</summary>
   
   - 사용자는 이력서 업로드, 면접 난이도 및 면접관 태도/기업 및 직무 등을 선택할 수 있음<br>
-    <img src= "https://github.com/user-attachments/assets/9e6b7e45-b34b-417b-b5b3-6b3ef352602b" width="600px"><br>
+  - '면접 결과창 가기' 버튼 클릭 시 면접 기록 및 피드백 화면으로 이동.<br>
+    <img src= "https://github.com/user-attachments/assets/6ccdf776-b72c-4b75-b764-5e447de8af75" width="600px"><br>
   - 면접 진행 중
   - '결과 보기' 버튼 클릭 시 피드백 화면으로 이동
+    
 
   
 </details>
@@ -161,7 +164,8 @@ AI 모의면접 서비스
 <details>
   <summary>4. 면접 피드백 화면</summary>
   
-  - 면접 종료 후 모범 답안 및 면접의 총점, 피드백 등을 제공
+  - 면접 종료 후 모범 답안 및 면접의 총점, 피드백 등을 제공<br>
+    <img src= "https://github.com/user-attachments/assets/b684aa4b-a5e2-4eb3-a876-3e4ccc2d9d59" width="600px">
     
   
 </details>
