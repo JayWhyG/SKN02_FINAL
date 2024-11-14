@@ -155,7 +155,8 @@ AI 모의면접 서비스
   - '면접 결과창 가기' 버튼 클릭 시 면접 기록 및 피드백 화면으로 이동<br>
     <img src= "https://github.com/user-attachments/assets/6ccdf776-b72c-4b75-b764-5e447de8af75" width="600px"><br>
   - 면접 진행 중
-  - '결과 보기' 버튼 클릭 시 피드백 화면으로 이동
+  - '결과 보기' 버튼 클릭 시 피드백 화면으로 이동<br>
+    <img src="https://github.com/user-attachments/assets/23ff9b5d-27c4-4a91-8c69-e8876b5b36ab" width="600px">
     
 
   
