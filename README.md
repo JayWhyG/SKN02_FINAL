@@ -23,8 +23,8 @@ AI 모의면접 서비스
   <tr>
     <td align="center">팀 로고</td>
     <td align="center">PM<br>모델 설계</td>
-    <td align="center">데이터 수집 및 전처리<br>DB 구현 </td>
-    <td align="center">웹서버 구축 및 구현<br>디자인 설계</td>
+    <td align="center">데이터 수집/전처리<br>DB 구현 </td>
+    <td align="center">웹서버 구축/구현<br>디자인 설계</td>
     <td align="center">문서화<br>디자인 설계</td>
     <td align="center">멘토</td>
 
