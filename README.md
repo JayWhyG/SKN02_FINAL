@@ -14,19 +14,19 @@ AI 모의면접 서비스
   </tr>
   <tr>
     <td><img src="https://github.com/user-attachments/assets/d06b6aae-3ece-465e-b24a-f6591b7a267a" width="100px" alt="호영희 이미지"></td>
-    <td><img src="https://github.com/user-attachments/assets/861bd8c6-78fa-4006-a819-1b2d0d7e3911" width="100px" alt="김은종 이미지"></td>
     <td><img src="https://github.com/user-attachments/assets/5d8c6d55-40ca-4769-b2fe-47ded1fd826d" width="100px" alt="강민호 이미지"></td>
     <td align="center"><img src="https://github.com/user-attachments/assets/03da861f-b44b-4032-882f-e3fe8383d1cd" width="100px" alt="박주희 이미지" ></td>
     <td align="center"><img src="https://github.com/user-attachments/assets/d6987aeb-094d-4b88-b31b-3ab674b9c273" width="100px" alt="장준영 이미지"></td>
     <td><img src="https://github.com/user-attachments/assets/6bbbbb65-1635-4088-a764-0d8d4f6f7618" width="100px" alt="정우영 이미지"></td>
+    <td><img src="https://github.com/user-attachments/assets/861bd8c6-78fa-4006-a819-1b2d0d7e3911" width="100px" alt="김은종 이미지"></td>
   </tr>
   <tr>
     <td align="center">팀 로고</td>
-    <td align="center">멘토</td>
-    <td align="center">PM<br>모델 설계 </td>
-    <td align="center">데이터 수집 및 전처리<br>DB 구현</td>
+    <td align="center">PM<br>모델 설계</td>
+    <td align="center">데이터 수집 및 전처리<br>DB 구현 </td>
     <td align="center">웹서버 구축 및 구현<br>디자인 설계</td>
     <td align="center">문서화<br>디자인 설계</td>
+    <td align="center">멘토</td>
 
   </tr>
 </table>
@@ -116,11 +116,11 @@ AI 모의면접 서비스
 <br />
 
 ## 💻 DB 테이블
-<img src="https://github.com/user-attachments/assets/1e17bbdc-8077-47b1-9598-c659bb3bc466" alt="erd" width="800px">
+<img src="https://github.com/user-attachments/assets/dace78fc-6737-4cf0-9854-ea645d472c56" alt="erd" width="800px">
 <br />
 
 ## 📚 시스템 아키텍처
-<img src="https://github.com/user-attachments/assets/ca7fc09c-fe7c-476d-9ac9-e941f8714681" alt="sa" width="800px">
+<img src="https://github.com/user-attachments/assets/71de800d-0890-4de2-830a-f5bf659b5576" alt="sa" width="800px">
 
 <br />
 
@@ -129,8 +129,7 @@ AI 모의면접 서비스
   <summary>1. 메인화면</summary>
   
   - '지금 시작하기' 클릭 시 로그인 창으로 이동<br>
-      <img src="https://github.com/user-attachments/assets/2b130d35-35ac-45f8-b1d0-3173a7ab307c" width="600px"><br>
-      <img src="https://github.com/user-attachments/assets/0bf1fffe-51a9-4ab4-b8cd-9cfa28be26d5" width="600px">
+      <img src="https://github.com/user-attachments/assets/e3901aba-395d-4e13-8add-68dada90016c" width="600px">
   
 </details>
 
@@ -138,10 +137,11 @@ AI 모의면접 서비스
   <summary>2. 로그인/회원가입 화면</summary>
   
   - 아이디와 비밀번호 입력 후 '로그인' 버튼 클릭 시 로그인 진행<br>
-    <img src="https://github.com/user-attachments/assets/e9c66a0c-3b29-447d-9814-85ac2d9bd953" width="600px">
+    <img src="https://github.com/user-attachments/assets/6e50b028-3163-4ace-b789-58db23255e38" width="600px"> <br>
   - '회원가입' 버튼 클릭 시 이용약관 동의 후 진행 가능<br>
-  <img src="https://github.com/user-attachments/assets/4aa7c940-6f00-4dcd-86a6-0c0bcc188dc3" width="600px"><br>
-  <img src="https://github.com/user-attachments/assets/573fdcf4-78b9-42e4-9b81-c6ba790df1ad" width="600px"><br>
+    <img src="https://github.com/user-attachments/assets/9ee33497-067a-4c1e-b530-cd971cb1293d" width="600px"> <br>
+    <img src="https://github.com/user-attachments/assets/6253484a-165e-465e-a2a7-0636083f6767" width="600px"> <br>
+
   - '아이디 찾기'버튼 클릭 후 가입된 이메일 입력 시 해당 아이디를 찾을 수 있음. <br>
     <img src="https://github.com/user-attachments/assets/a1f4ffb9-884f-4fb1-8398-d786a624eda4" width="600px">
 
@@ -153,7 +153,7 @@ AI 모의면접 서비스
   
   - 사용자는 이력서 업로드, 면접 난이도 및 면접관 태도/기업 및 직무 등을 선택할 수 있음<br>
   - '면접 결과창 가기' 버튼 클릭 시 면접 기록 및 피드백 화면으로 이동<br>
-    <img src= "https://github.com/user-attachments/assets/6ccdf776-b72c-4b75-b764-5e447de8af75" width="600px"><br>
+    <img src= "https://github.com/user-attachments/assets/d544e2d5-389f-4c31-badd-ca6824742bb6" width="600px"><br>
   - 면접 진행 중
   - '결과 보기' 버튼 클릭 시 피드백 화면으로 이동<br>
     <img src="https://github.com/user-attachments/assets/23ff9b5d-27c4-4a91-8c69-e8876b5b36ab" width="600px">
@@ -166,7 +166,7 @@ AI 모의면접 서비스
   <summary>4. 면접 피드백 화면</summary>
   
   - 면접 종료 후 모범 답안 및 면접의 총점, 피드백 등을 제공<br>
-    <img src= "https://github.com/user-attachments/assets/b684aa4b-a5e2-4eb3-a876-3e4ccc2d9d59" width="600px">
+    <img src= "https://github.com/user-attachments/assets/59bc272f-c7b5-45d7-943b-d531098d6935" width="600px">
     
   
 </details>
