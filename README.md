@@ -156,7 +156,7 @@ AI 모의면접 서비스
     <img src= "https://github.com/user-attachments/assets/d544e2d5-389f-4c31-badd-ca6824742bb6" width="600px"><br>
   - 면접 진행 중
   - '결과 보기' 버튼 클릭 시 피드백 화면으로 이동<br>
-    <img src="https://github.com/user-attachments/assets/b2122584-acb9-49a2-9071-c18820db789c" width="600px">
+    <img src="https://github.com/user-attachments/assets/3769eb3a-6f9b-4096-a5ae-efe3893c682c" width="600px"><br>
     
 
   
