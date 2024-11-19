@@ -6,11 +6,11 @@ AI 모의면접 서비스
 <table>
   <tr>
     <th>HYH</th>
-    <th>김은종</th>
     <th>강민호</th>
     <th>박주희</th>
     <th>장준영</th>
     <th>정우영</th>
+    <th>김은종</th>
   </tr>
   <tr>
     <td><img src="https://github.com/user-attachments/assets/d06b6aae-3ece-465e-b24a-f6591b7a267a" width="100px" alt="호영희 이미지"></td>
